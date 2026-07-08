@@ -5,7 +5,7 @@
 
     google-chrome --headless=new --no-sandbox --disable-gpu --hide-scrollbars \
       --force-device-scale-factor=2 --window-size=1280,400 \
-      --run-all-compositor-stages-before-draw --virtual-time-budget=4000 \
+      --run-all-compositor-stages-before-draw --virtual-time-budget=6000 \
       --user-data-dir=/tmp/chrome-banner \
       --screenshot=assets/banner.png "file://$PWD/assets/banner.src.html"
 
@@ -158,49 +158,66 @@
       }
       .asseen b { display: block; font-size: 30px; color: #fff; }
 
-      /* the SlopDial */
+      /* the SlopDial — amp knob that goes to 11 */
       .dial-wrap { position: absolute; right: 96px; top: 96px; text-align: center; width: 260px; }
       .dial {
+        --d: 250px;
         position: relative;
-        width: 250px; height: 250px;
+        width: var(--d); height: var(--d);
         border-radius: 50%;
         margin: 0 auto;
-        background: radial-gradient(circle at 50% 40%, #2c2630, var(--ink));
+        background: radial-gradient(circle at 50% 38%, #3a3542, var(--ink) 72%);
         border: 7px solid var(--ink);
         box-shadow: 0 0 0 8px var(--gold), 8px 9px 0 rgba(0,0,0,0.28);
       }
-      .tick { position: absolute; left: 50%; top: 50%; }
-      .tick b {
-        display: block;
-        color: var(--gold);
-        font-size: 22px;
+      /* redline arc over the 10 -> 11 sector */
+      .redline {
+        position: absolute; inset: calc(var(--d) * 0.035); border-radius: 50%;
+        background: conic-gradient(from 0deg, transparent 0 100deg, var(--red) 100deg 143deg, transparent 143deg);
+        -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 7px), #000 calc(100% - 7px));
+        mask: radial-gradient(farthest-side, transparent calc(100% - 7px), #000 calc(100% - 7px));
       }
+      /* scale numbers 1..11 — evenly placed, kept upright */
+      .num { position: absolute; inset: 0; text-align: center; transform: rotate(var(--a)); }
+      .num b {
+        display: inline-block;
+        margin-top: calc(var(--d) * 0.072);
+        font: 400 calc(var(--d) * 0.098)/1 var(--display);
+        color: var(--cream);
+        transform: rotate(calc(-1 * var(--a)));
+        text-shadow: 0 1px 0 rgba(0,0,0,0.45);
+      }
+      .num.hot b { color: var(--red); font-weight: 700; text-shadow: 0 0 7px rgba(229,9,29,0.55); }
+      /* the amp knob, cranked clockwise so the pointer sits on 11 */
       .knob {
-        position: absolute; inset: 44px;
+        position: absolute; inset: calc(var(--d) * 0.205);
         border-radius: 50%;
-        background: linear-gradient(160deg, #fff, #c9c9d2 60%, #8a8a95);
-        border: 5px solid var(--ink);
-        transform: rotate(19deg);
+        background: radial-gradient(circle at 50% 30%, #55505c, #1c1a20 60%, #0b0a0d);
+        border: 3px solid #000;
+        box-shadow:
+          inset 0 3px 4px rgba(255,255,255,0.18),
+          inset 0 -4px 6px rgba(0,0,0,0.6),
+          0 3px 5px rgba(0,0,0,0.5);
+        transform: rotate(135deg);
       }
-      .ind {
-        position: absolute; left: 50%; top: 10px;
-        width: 12px; height: 40px; margin-left: -6px;
-        border-radius: 6px;
-        background: var(--red);
-        box-shadow: 0 0 0 3px var(--ink);
+      .knob::after {
+        content: ""; position: absolute; left: 50%; top: 9%;
+        width: calc(var(--d) * 0.028); height: 41%; margin-left: calc(var(--d) * -0.014);
+        border-radius: 3px; background: linear-gradient(var(--cream), #b9b9c2);
+        box-shadow: 0 0 0 1px rgba(0,0,0,0.55), 0 0 8px rgba(255,255,255,0.35);
       }
-      .read {
-        position: absolute; inset: 0;
-        display: grid; place-items: center;
-        color: var(--red);
-        font-size: 82px;
-        text-shadow: 0 0 10px rgba(255,255,255,0.95);
+      .knob::before {
+        content: ""; position: absolute; left: 50%; top: 50%;
+        width: calc(var(--d) * 0.06); height: calc(var(--d) * 0.06);
+        transform: translate(-50%,-50%); border-radius: 50%;
+        background: radial-gradient(circle at 40% 35%, #3a3640, #0a090c);
+        box-shadow: 0 0 0 1px rgba(0,0,0,0.6);
       }
       .cap {
         margin-top: 12px;
         color: var(--ink);
-        font-size: 24px;
-        letter-spacing: 0.04em;
+        font-size: 22px;
+        letter-spacing: 0.03em;
         text-transform: uppercase;
       }
     </style>
@@ -210,7 +227,7 @@
       <div class="ticker">
         <span class="s">★</span> BUT WAIT — THERE'S MORE &nbsp; <span class="s">★</span>
         MAXIMUM VELOCITY, MINIMUM SUBSTANCE &nbsp; <span class="s">★</span> THE KNOB GOES TO
-        <b>11</b> — WE SKIPPED 10 &nbsp; <span class="s">★</span> SLOP IS <b>INFINITE</b>
+        <b>11</b> — ONE LOUDER &nbsp; <span class="s">★</span> SLOP IS <b>INFINITE</b>
         &nbsp; <span class="s">★</span> AS SEEN ON EVERY FEED &nbsp; <span class="s">★</span>
         STOP HAVING THOUGHTS &nbsp; <span class="s">★</span>
       </div>
@@ -230,21 +247,21 @@
 
       <div class="dial-wrap">
         <div class="dial">
-          <div class="tick" style="transform:rotate(0deg) translateY(-104px)"><b style="transform:rotate(0deg)">11</b></div>
-          <div class="tick" style="transform:rotate(32.7deg) translateY(-104px)"><b style="transform:rotate(-32.7deg)">11</b></div>
-          <div class="tick" style="transform:rotate(65.5deg) translateY(-104px)"><b style="transform:rotate(-65.5deg)">11</b></div>
-          <div class="tick" style="transform:rotate(98.2deg) translateY(-104px)"><b style="transform:rotate(-98.2deg)">11</b></div>
-          <div class="tick" style="transform:rotate(130.9deg) translateY(-104px)"><b style="transform:rotate(-130.9deg)">11</b></div>
-          <div class="tick" style="transform:rotate(163.6deg) translateY(-104px)"><b style="transform:rotate(-163.6deg)">11</b></div>
-          <div class="tick" style="transform:rotate(196.4deg) translateY(-104px)"><b style="transform:rotate(-196.4deg)">11</b></div>
-          <div class="tick" style="transform:rotate(229.1deg) translateY(-104px)"><b style="transform:rotate(-229.1deg)">11</b></div>
-          <div class="tick" style="transform:rotate(261.8deg) translateY(-104px)"><b style="transform:rotate(-261.8deg)">11</b></div>
-          <div class="tick" style="transform:rotate(294.5deg) translateY(-104px)"><b style="transform:rotate(-294.5deg)">11</b></div>
-          <div class="tick" style="transform:rotate(327.3deg) translateY(-104px)"><b style="transform:rotate(-327.3deg)">11</b></div>
-          <div class="knob"><div class="ind"></div></div>
-          <div class="read">11</div>
+          <div class="redline"></div>
+          <div class="num" style="--a:-135deg"><b>1</b></div>
+          <div class="num" style="--a:-108deg"><b>2</b></div>
+          <div class="num" style="--a:-81deg"><b>3</b></div>
+          <div class="num" style="--a:-54deg"><b>4</b></div>
+          <div class="num" style="--a:-27deg"><b>5</b></div>
+          <div class="num" style="--a:0deg"><b>6</b></div>
+          <div class="num" style="--a:27deg"><b>7</b></div>
+          <div class="num" style="--a:54deg"><b>8</b></div>
+          <div class="num" style="--a:81deg"><b>9</b></div>
+          <div class="num" style="--a:108deg"><b>10</b></div>
+          <div class="num hot" style="--a:135deg"><b>11</b></div>
+          <div class="knob"></div>
         </div>
-        <div class="cap">It only goes to 11</div>
+        <div class="cap">These go to eleven</div>
       </div>
 
       <div class="band">
