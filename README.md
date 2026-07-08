@@ -37,15 +37,19 @@ slop? Say **"show the ladder."** Want it shorter or calmer? **"3 passes,"** **"f
 ## 🖥️ BUT WAIT — THERE'S A WEB UI!
 
 A first-slice web UI now lives in [`web/`](web/) — a local page that slopifies through your
-**Claude subscription** (no API key needed), now wearing its own gloriously over-the-top
-infomercial skin (yes, the knob goes to 11, and yes, confetti):
+**Claude subscription** (no API key, no config), now wearing its own gloriously over-the-top
+infomercial skin (yes, the knob goes to 11, and yes, confetti).
 
-```
-cd web && npm install && npm start
-```
+**One-time:** grab [Node.js](https://nodejs.org) 18+ and sign in to Claude (`claude login` —
+[get Claude Code](https://claude.com/claude-code) if you need it). **Then just start the machine:**
 
-then open `localhost:3000`. It still lives in Claude Code too, delivering in chat. A polished web
-UI remains the planned primary way in.
+- **macOS:** double-click `web/start.command` · **Windows:** double-click `web/start.bat` ·
+  **Linux:** `web/start.sh`
+- **Terminal, any OS:** `node web/start.mjs`
+
+It installs itself on the first run, fires up the server, and flings your browser open to the slop.
+It still lives in Claude Code too, delivering in chat. A polished web UI remains the planned primary
+way in.
 
 ## 🎁 It's also two other things (STILL FREE!)
 

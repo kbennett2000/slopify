@@ -1,9 +1,10 @@
 import "dotenv/config";
 import express from "express";
 import { query } from "@anthropic-ai/claude-agent-sdk";
-import { readFileSync } from "node:fs";
+import { readFileSync, existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
+import { homedir } from "node:os";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -137,4 +138,13 @@ app.use((err, req, res, next) => {
 
 app.listen(PORT, () => {
   console.log(`slopify web UI → http://localhost:${PORT}`);
+  // Heads-up if there's no way to authenticate. The launcher (start.mjs) checks
+  // this before starting, but `npm run server` skips it. Non-fatal — the model
+  // call would otherwise fail later with a 401.
+  const hasKey = (process.env.ANTHROPIC_API_KEY || "").trim();
+  if (!hasKey && !existsSync(join(homedir(), ".claude", ".credentials.json"))) {
+    console.log(
+      "  ⚠ Not signed in to Claude — requests will fail. Run `claude login` first.",
+    );
+  }
 });

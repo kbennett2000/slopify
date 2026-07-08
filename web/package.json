@@ -5,7 +5,8 @@
   "description": "Local web UI for slopify — a thin backend that runs the real slopify skill through the Claude API.",
   "type": "module",
   "scripts": {
-    "start": "node server.js",
+    "start": "node start.mjs",
+    "server": "node server.js",
     "dev": "node --watch server.js"
   },
   "license": "MIT",

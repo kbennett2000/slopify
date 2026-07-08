@@ -11,21 +11,38 @@ the backend shape is recorded in [ADR-0003](../docs/adr/ADR-0003-web-ui-backend.
 
 ## Run it
 
-```
-cd web
-npm install
-npm start
-```
+**One-time prerequisites:**
 
-Open <http://localhost:3000>, type something mundane, hit **Slopify** (~15–30s), then **Copy**.
+- **[Node.js](https://nodejs.org) 18+** installed.
+- **Signed in to Claude** — the UI runs on your Claude subscription, the same login Claude Code
+  uses. Get [Claude Code](https://claude.com/claude-code) if you don't have it, then run
+  `claude login`.
 
-You just need to be signed in to Claude Code (`claude login`) — the UI reuses that subscription
-login. **No API key required.**
+**Then run the launcher** — it installs dependencies on first run, starts the server, and opens
+your browser:
+
+- **macOS** — double-click `start.command` (or `./start.command` in a terminal)
+- **Windows** — double-click `start.bat`
+- **Linux** — `./start.sh`
+- **Any OS, from a terminal** — `node start.mjs` (or `npm start`)
+
+Type something mundane, hit **Slopify** (~15–30s), then **Copy** or share.
+
+> First run downloads the Claude Agent SDK (~250 MB, one time only). **No API key, no `.env`
+> needed** — signing in to Claude is the whole setup.
 
 ## Notes
 
-- **Auth:** your Claude subscription by default. To bill the Anthropic API instead, put
-  `ANTHROPIC_API_KEY` in `web/.env` (see [`.env.example`](.env.example)) — it takes over when present.
+- **Auth:** your Claude subscription by default (no API key, no `.env`). The launcher checks you're
+  signed in before starting and points you to `claude login` if not. To bill the Anthropic API
+  instead, put `ANTHROPIC_API_KEY` in `web/.env` (see [`.env.example`](.env.example)) — it takes over
+  when present.
+- **Commands:** `npm start` (or the OS launcher) runs the friendly path — preflight → install if
+  needed → server → open browser. `npm run server` starts the raw server only; `npm run dev` adds
+  auto-reload.
+- **Not standalone:** the backend reads the real methodology from
+  [`../.claude/skills/slopify/SKILL.md`](../.claude/skills/slopify/SKILL.md) two levels up, so run it
+  from inside the repo — don't copy `web/` out on its own.
 - **Model:** `claude-sonnet-5` (a UI-only choice). The project's Claude Code skill still runs on
   `claude-opus-4-8` at effort `max`; that pin in `../.claude/settings.json` is untouched — and
   deliberately ignored here (`settingSources: []`). Swapping the UI's model is a one-line change in

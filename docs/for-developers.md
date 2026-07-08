@@ -41,6 +41,23 @@ The important boundary: the **skill produces a post and hands it back** — it d
 the caller is the `/slopify` command, a plain chat request, or (later) a web UI. That
 delivery-agnostic seam is what lets the interface change without touching the method.
 
+## Running it as a web app
+
+The same skill also drives a small local web UI in [`../web/`](../web/) — a thin Node/Express
+backend that reads `SKILL.md` as its system prompt and runs it through the **Claude Agent SDK on
+your Claude subscription** (no API key). It's a separate *caller*, not part of the prompt-only skill,
+so it does carry dependencies — that boundary is recorded in
+[`ADR-0003`](adr/ADR-0003-web-ui-backend.md).
+
+Running it is one action — it self-installs on first run, starts the server, and opens your browser:
+
+- **Prerequisites:** [Node.js](https://nodejs.org) 18+ and a signed-in Claude (`claude login` — the
+  UI reuses Claude Code's subscription login).
+- **Launch:** double-click `web/start.command` (macOS) / `web/start.bat` (Windows) / run
+  `web/start.sh` (Linux), or `node web/start.mjs` from any terminal.
+
+No API key and no `.env` are needed; see [`web/README.md`](../web/README.md) for the details.
+
 ## Why prompt-only?
 
 Every step here — the base post, each amplification pass, judging "is this transparently parody?"
