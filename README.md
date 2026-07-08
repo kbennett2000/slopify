@@ -1,3 +1,7 @@
+<p align="center">
+  <a href="docs/AS-SEEN-ON-TV.md"><img src="assets/banner.png" width="100%" alt="SLOPIFY — Stop Doing It Yourself! Type something mundane and get back an over-the-top, transparently satirical AI-slop clickbait post. As Seen On TV. The knob goes to 11." /></a>
+</p>
+
 # Slopify 🚨
 
 ### *STOP DOING IT YOURSELF!* — the machine that turns a shrug into a SPECTACLE

@@ -1,0 +1,256 @@
+<!doctype html>
+<!--
+  Source for assets/banner.png (the README banner). Pure presentation — safe to edit.
+  Re-render at 1280x400 @2x (=2560x800) with headless Chrome:
+
+    google-chrome --headless=new --no-sandbox --disable-gpu --hide-scrollbars \
+      --force-device-scale-factor=2 --window-size=1280,400 \
+      --run-all-compositor-stages-before-draw --virtual-time-budget=4000 \
+      --user-data-dir=/tmp/chrome-banner \
+      --screenshot=assets/banner.png "file://$PWD/assets/banner.src.html"
+
+  Needs the Impact font installed. It's a bit; the honest small print is baked into the art.
+-->
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      :root {
+        --gold: #ffd200;
+        --gold-lite: #ffe680;
+        --red: #e5091d;
+        --red-dark: #a80510;
+        --ink: #141018;
+        --cream: #fff8e7;
+        --display: "Impact", "Arial Black", sans-serif;
+        --burst: polygon(
+          50% 0%, 59.8% 13.3%, 75% 6.7%, 76.9% 23.1%, 93.3% 25%, 86.7% 40.2%,
+          100% 50%, 86.7% 59.8%, 93.3% 75%, 76.9% 76.9%, 75% 93.3%,
+          59.8% 86.7%, 50% 100%, 40.2% 86.7%, 25% 93.3%, 23.1% 76.9%,
+          6.7% 75%, 13.3% 59.8%, 0% 50%, 13.3% 40.2%, 6.7% 25%,
+          23.1% 23.1%, 25% 6.7%, 40.2% 13.3%
+        );
+      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      html, body { width: 1280px; height: 400px; overflow: hidden; }
+      .banner {
+        position: relative;
+        width: 1280px;
+        height: 400px;
+        background: repeating-conic-gradient(
+          from 0deg at 34% 46%,
+          var(--gold-lite) 0deg 6deg,
+          var(--gold) 6deg 12deg
+        );
+        font-family: var(--display);
+        overflow: hidden;
+      }
+      /* faint CRT scanlines */
+      .banner::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: repeating-linear-gradient(
+          to bottom, rgba(0,0,0,0.05) 0 1px, transparent 1px 3px
+        );
+        mix-blend-mode: multiply;
+        pointer-events: none;
+      }
+
+      /* top ticker */
+      .ticker {
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 42px;
+        background: var(--ink);
+        color: var(--gold);
+        border-bottom: 4px solid var(--red);
+        font-size: 20px;
+        line-height: 38px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        white-space: nowrap;
+        overflow: hidden;
+        padding-left: 18px;
+      }
+      .ticker .s { color: var(--red); }
+      .ticker b { color: #fff; }
+
+      /* bottom honest band */
+      .band {
+        position: absolute;
+        left: 0; right: 0; bottom: 0;
+        height: 40px;
+        background: var(--ink);
+        color: var(--cream);
+        font-family: "Liberation Sans", "Arial", sans-serif;
+        font-size: 15.5px;
+        line-height: 40px;
+        letter-spacing: 0.02em;
+        text-align: center;
+      }
+      .band b { color: var(--gold); }
+
+      /* hero text block */
+      .hero { position: absolute; left: 60px; top: 56px; width: 700px; }
+      .kicker {
+        color: var(--red-dark);
+        font-size: 21px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        margin-bottom: 2px;
+      }
+      .word {
+        font-size: 132px;
+        line-height: 0.86;
+        color: var(--gold);
+        -webkit-text-stroke: 7px var(--ink);
+        paint-order: stroke fill;
+        transform: skewY(-3deg);
+        letter-spacing: 2px;
+        filter: drop-shadow(7px 8px 0 rgba(168,5,16,0.9));
+      }
+      .ribbon {
+        display: inline-block;
+        margin-top: 12px;
+        background: var(--red);
+        color: #fff;
+        font-size: 30px;
+        letter-spacing: 0.01em;
+        text-transform: uppercase;
+        padding: 6px 16px 8px;
+        transform: skewX(-6deg);
+        box-shadow: 5px 5px 0 var(--ink);
+        -webkit-text-stroke: 1px var(--ink);
+      }
+      .tag {
+        margin-top: 16px;
+        width: 664px;
+        font-family: "Liberation Sans", "Arial", sans-serif;
+        font-weight: 700;
+        font-size: 20px;
+        line-height: 1.3;
+        color: #4a3d0c;
+        text-transform: none;
+        letter-spacing: 0;
+      }
+      .tag .pop { color: var(--red-dark); }
+
+      /* AS SEEN ON TV starburst */
+      .burst {
+        position: absolute;
+        clip-path: var(--burst);
+        display: grid;
+        place-items: center;
+        text-align: center;
+        text-transform: uppercase;
+        line-height: 1;
+      }
+      .asseen {
+        width: 150px; height: 150px;
+        top: 60px; right: 372px;
+        background: var(--ink);
+        color: var(--gold);
+        transform: rotate(-14deg);
+        font-size: 19px;
+        z-index: 5;
+      }
+      .asseen b { display: block; font-size: 30px; color: #fff; }
+
+      /* the SlopDial */
+      .dial-wrap { position: absolute; right: 96px; top: 96px; text-align: center; width: 260px; }
+      .dial {
+        position: relative;
+        width: 250px; height: 250px;
+        border-radius: 50%;
+        margin: 0 auto;
+        background: radial-gradient(circle at 50% 40%, #2c2630, var(--ink));
+        border: 7px solid var(--ink);
+        box-shadow: 0 0 0 8px var(--gold), 8px 9px 0 rgba(0,0,0,0.28);
+      }
+      .tick { position: absolute; left: 50%; top: 50%; }
+      .tick b {
+        display: block;
+        color: var(--gold);
+        font-size: 22px;
+      }
+      .knob {
+        position: absolute; inset: 44px;
+        border-radius: 50%;
+        background: linear-gradient(160deg, #fff, #c9c9d2 60%, #8a8a95);
+        border: 5px solid var(--ink);
+        transform: rotate(19deg);
+      }
+      .ind {
+        position: absolute; left: 50%; top: 10px;
+        width: 12px; height: 40px; margin-left: -6px;
+        border-radius: 6px;
+        background: var(--red);
+        box-shadow: 0 0 0 3px var(--ink);
+      }
+      .read {
+        position: absolute; inset: 0;
+        display: grid; place-items: center;
+        color: var(--red);
+        font-size: 82px;
+        text-shadow: 0 0 10px rgba(255,255,255,0.95);
+      }
+      .cap {
+        margin-top: 12px;
+        color: var(--ink);
+        font-size: 24px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="banner">
+      <div class="ticker">
+        <span class="s">★</span> BUT WAIT — THERE'S MORE &nbsp; <span class="s">★</span>
+        MAXIMUM VELOCITY, MINIMUM SUBSTANCE &nbsp; <span class="s">★</span> THE KNOB GOES TO
+        <b>11</b> — WE SKIPPED 10 &nbsp; <span class="s">★</span> SLOP IS <b>INFINITE</b>
+        &nbsp; <span class="s">★</span> AS SEEN ON EVERY FEED &nbsp; <span class="s">★</span>
+        STOP HAVING THOUGHTS &nbsp; <span class="s">★</span>
+      </div>
+
+      <div class="hero">
+        <div class="kicker">The #1 name in industrial-grade slop</div>
+        <div class="word">SLOPIFY</div>
+        <div class="ribbon">Stop Doing It Yourself!</div>
+        <div class="tag">
+          Type something <span class="pop">mundane</span> → get back an over-the-top
+          <span class="pop">AI-slop clickbait</span> post. The kernel survives; it just…
+          <span class="pop">ascended.</span>
+        </div>
+      </div>
+
+      <div class="burst asseen">As Seen<br /><b>On TV</b></div>
+
+      <div class="dial-wrap">
+        <div class="dial">
+          <div class="tick" style="transform:rotate(0deg) translateY(-104px)"><b style="transform:rotate(0deg)">11</b></div>
+          <div class="tick" style="transform:rotate(32.7deg) translateY(-104px)"><b style="transform:rotate(-32.7deg)">11</b></div>
+          <div class="tick" style="transform:rotate(65.5deg) translateY(-104px)"><b style="transform:rotate(-65.5deg)">11</b></div>
+          <div class="tick" style="transform:rotate(98.2deg) translateY(-104px)"><b style="transform:rotate(-98.2deg)">11</b></div>
+          <div class="tick" style="transform:rotate(130.9deg) translateY(-104px)"><b style="transform:rotate(-130.9deg)">11</b></div>
+          <div class="tick" style="transform:rotate(163.6deg) translateY(-104px)"><b style="transform:rotate(-163.6deg)">11</b></div>
+          <div class="tick" style="transform:rotate(196.4deg) translateY(-104px)"><b style="transform:rotate(-196.4deg)">11</b></div>
+          <div class="tick" style="transform:rotate(229.1deg) translateY(-104px)"><b style="transform:rotate(-229.1deg)">11</b></div>
+          <div class="tick" style="transform:rotate(261.8deg) translateY(-104px)"><b style="transform:rotate(-261.8deg)">11</b></div>
+          <div class="tick" style="transform:rotate(294.5deg) translateY(-104px)"><b style="transform:rotate(-294.5deg)">11</b></div>
+          <div class="tick" style="transform:rotate(327.3deg) translateY(-104px)"><b style="transform:rotate(-327.3deg)">11</b></div>
+          <div class="knob"><div class="ind"></div></div>
+          <div class="read">11</div>
+        </div>
+        <div class="cap">It only goes to 11</div>
+      </div>
+
+      <div class="band">
+        A prompt-only <b>Claude Code</b> skill · runs on your <b>Claude subscription</b> ·
+        every post is <b>transparently satirical</b> (that's the guardrail)
+      </div>
+    </div>
+  </body>
+</html>
