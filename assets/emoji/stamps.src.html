@@ -1,0 +1,296 @@
+<!doctype html>
+<!--
+  Source for the animated README "infomercial stamp" GIFs in assets/emoji/*.gif.
+  Pure presentation — safe to edit. One page holds all 7 stamps; each is lifted from the
+  web UI / banner (assets/banner.src.html, web/public/index.html): the AS-SEEN-ON-TV
+  starburst, the FREE price seal, the hot-pink BUT WAIT tag, the SlopDial amp knob, etc.
+
+  It is NOT rendered by hand. Regenerate every GIF with:
+
+    node assets/emoji/render.mjs            # all stamps
+    node assets/emoji/render.mjs free       # just one
+
+  The render script drives this file with ?stamp=<name>&f=<0..1>, screenshots each frame
+  in headless Chrome (transparent background), and encodes a looping GIF with ffmpeg.
+  Open this file plain in a browser to preview all stamps animating live.
+
+  Needs the Impact font installed (same as the banner) — the whole look depends on it.
+
+  How frame-freezing works: every animation runs for 1s. The renderer sets --f (0..1) and
+  data-frozen on <html>; the rule below pauses all animations and applies a negative delay
+  of --f seconds, so each frame is a deterministic still of that phase (no wall-clock timing).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      :root {
+        --gold: #ffd200;
+        --gold-lite: #ffe680;
+        --red: #e5091d;
+        --red-dark: #a80510;
+        --ink: #141018;
+        --cream: #fff8e7;
+        --pink: #ff2d95;
+        --display: "Impact", "Arial Black", sans-serif;
+        --burst: polygon(
+          50% 0%, 59.8% 13.3%, 75% 6.7%, 76.9% 23.1%, 93.3% 25%, 86.7% 40.2%,
+          100% 50%, 86.7% 59.8%, 93.3% 75%, 76.9% 76.9%, 75% 93.3%,
+          59.8% 86.7%, 50% 100%, 40.2% 86.7%, 25% 93.3%, 23.1% 76.9%,
+          6.7% 75%, 13.3% 59.8%, 0% 50%, 13.3% 40.2%, 6.7% 25%,
+          23.1% 23.1%, 25% 6.7%, 40.2% 13.3%
+        );
+        --f: 0;
+      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      html, body { width: 100%; height: 100%; background: transparent; }
+      body {
+        display: grid;
+        place-items: center;
+        font-family: var(--display);
+        text-transform: uppercase;
+        line-height: 1;
+      }
+
+      /* --- frame-freeze: render a deterministic still at phase --f (0..1) --- */
+      html[data-frozen] * {
+        animation-play-state: paused !important;
+        animation-delay: calc(var(--f) * -1s) !important;
+      }
+
+      /* Each stamp is hidden until the renderer (or preview grid) shows it. */
+      .stamp { display: none; place-items: center; width: 100%; height: 100%; }
+
+      /* ============================ shared "seal" (starburst badge) ============================ */
+      /* A star face with a slightly larger star behind it acting as a keyline, so the badge
+         reads on GitHub's light AND dark README themes (a clip-path can't take a border). */
+      .seal { position: relative; display: grid; place-items: center; }
+      .seal::before {                       /* keyline star */
+        content: "";
+        position: absolute; inset: -5px;
+        clip-path: var(--burst);
+        background: var(--key, #fff);
+        z-index: 0;
+      }
+      .seal .face {
+        position: relative; z-index: 1;
+        clip-path: var(--burst);
+        display: grid; place-items: center;
+        text-align: center;
+      }
+      .seal .face b { display: block; }
+
+      /* ---- 1. AS SEEN ON TV — ink starburst, gold keyline, marquee flash (ink<->red) ---- */
+      /* Flash swaps opaque fills only — never opacity, which 1-bit-alpha GIF would drop to
+         fully transparent, making the badge vanish instead of dim. */
+      .stamp.as-seen-on-tv .seal { --key: var(--gold); }
+      .as-seen-on-tv .face {
+        width: 104px; height: 104px;
+        background: var(--ink); color: var(--gold);
+        transform: rotate(-13deg);
+        font-size: 15px; letter-spacing: 0.02em; padding-top: 2px;
+        animation: tvflash 1s steps(1, end) infinite;
+      }
+      .as-seen-on-tv .face b { font-size: 25px; color: #fff; margin-top: 1px; }
+
+      /* ---- 2. ALERT ("!") — red starburst, white keyline, pulse ---- */
+      .stamp.alert .seal { --key: #fff; animation: pulse 1s ease-in-out infinite; }
+      .alert .face {
+        width: 104px; height: 104px;
+        background: var(--red); color: var(--cream);
+        transform: rotate(-8deg);
+      }
+      .alert .face b {
+        font-size: 58px; color: var(--gold);
+        text-shadow: 2px 2px 0 var(--ink);
+        transform: skewX(-4deg);
+      }
+
+      /* ---- 3. CALL NOW! — red starburst, gold keyline, throb ---- */
+      .stamp.call-now .seal { --key: var(--gold); animation: throb 1s ease-in-out infinite; }
+      .call-now .face {
+        width: 104px; height: 104px;
+        background: var(--red); color: #fff;
+        transform: rotate(-6deg);
+        font-size: 20px; letter-spacing: 0.01em;
+      }
+      .call-now .face b { font-size: 30px; color: var(--gold); text-shadow: 1px 1px 0 var(--ink); }
+
+      /* ---- 5. FREE — red price seal, white keyline, ~~$499~~ FREE, pulse ---- */
+      .stamp.free .seal { --key: #fff; animation: pulse 1s ease-in-out infinite; }
+      .free .face {
+        width: 104px; height: 104px;
+        background: var(--red); color: #fff;
+        transform: rotate(-10deg);
+        padding-top: 4px;
+      }
+      .free .strike { font-size: 15px; text-decoration: line-through; opacity: 0.85; }
+      .free .face b { font-size: 42px; color: var(--gold); text-shadow: 2px 2px 0 var(--ink); margin: -2px 0; }
+      .free .tiny { font-size: 9px; letter-spacing: 0.04em; }
+
+      /* ---- 7. GUARANTEED — gold rosette, ink keyline, slow spin + glint ---- */
+      .stamp.guaranteed .seal { --key: var(--ink); }
+      .guaranteed .rosette { position: relative; width: 108px; height: 108px; }
+      .guaranteed .face {
+        position: absolute; inset: 0;
+        background: var(--gold); color: var(--ink);
+        font-size: 26px; letter-spacing: -0.01em;
+        animation: spin 1s linear infinite;
+      }
+      .guaranteed .face small { font-size: 15px; display: block; font-weight: 400; }
+      .guaranteed .glint {          /* white streak sweeping across, clipped to the star */
+        position: absolute; inset: 0; z-index: 2;
+        clip-path: var(--burst);
+        background: linear-gradient(115deg, transparent 38%, rgba(255,255,255,0.85) 50%, transparent 62%);
+        background-size: 300% 100%;
+        animation: glint 1s ease-in-out infinite;
+      }
+
+      /* ============================ 4. BUT WAIT! — hot-pink tag ============================ */
+      .stamp.but-wait .tag {
+        background: var(--pink); color: #fff;
+        border: 4px solid var(--ink); border-radius: 9px;
+        box-shadow: 6px 6px 0 var(--ink);
+        padding: 12px 18px 14px;
+        font-size: 34px; letter-spacing: 0.01em;
+        text-shadow: 2px 2px 0 var(--ink);
+        white-space: nowrap;
+        animation: rock 1s ease-in-out infinite;
+      }
+
+      /* ============================ 6. SLOPDIAL — the amp knob ============================ */
+      /* Straight from assets/banner.src.html (.dial), scaled down; the knob wiggles at 11. */
+      .stamp.slopdial .dial {
+        --d: 108px;
+        position: relative;
+        width: var(--d); height: var(--d);
+        border-radius: 50%;
+        background: radial-gradient(circle at 50% 38%, #3a3542, var(--ink) 72%);
+        border: 5px solid var(--ink);
+        box-shadow: 0 0 0 5px var(--gold);      /* gold ring = keyline for dark theme */
+      }
+      .slopdial .redline {
+        position: absolute; inset: calc(var(--d) * 0.035); border-radius: 50%;
+        background: conic-gradient(from 0deg, transparent 0 100deg, var(--red) 100deg 143deg, transparent 143deg);
+        -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 5px), #000 calc(100% - 5px));
+        mask: radial-gradient(farthest-side, transparent calc(100% - 5px), #000 calc(100% - 5px));
+      }
+      .slopdial .num { position: absolute; inset: 0; text-align: center; transform: rotate(var(--a)); }
+      .slopdial .num b {
+        display: inline-block;
+        margin-top: calc(var(--d) * 0.06);
+        font: 400 calc(var(--d) * 0.12)/1 var(--display);
+        color: var(--cream);
+        transform: rotate(calc(-1 * var(--a)));
+        text-shadow: 0 1px 0 rgba(0,0,0,0.45);
+      }
+      .slopdial .num.hot b { color: var(--red); font-weight: 700; text-shadow: 0 0 6px rgba(229,9,29,0.6); }
+      .slopdial .knob {   /* static: a fixed molded highlight keeps the per-frame diff tiny */
+        position: absolute; inset: calc(var(--d) * 0.205);
+        border-radius: 50%;
+        background: radial-gradient(circle at 50% 30%, #55505c, #1c1a20 60%, #0b0a0d);
+        border: 3px solid #000;
+        box-shadow:
+          inset 0 3px 4px rgba(255,255,255,0.18),
+          inset 0 -4px 6px rgba(0,0,0,0.6);
+      }
+      .slopdial .pointer {   /* only the indicator sweeps -> jitters around the 11 */
+        position: absolute; inset: 0;
+        animation: wiggle 1s ease-in-out infinite;
+      }
+      .slopdial .pointer::before {
+        content: ""; position: absolute; left: 50%; top: 9%;
+        width: calc(var(--d) * 0.03); height: 41%; margin-left: calc(var(--d) * -0.015);
+        border-radius: 3px; background: linear-gradient(var(--cream), #b9b9c2);
+        box-shadow: 0 0 0 1px rgba(0,0,0,0.55);
+      }
+      .slopdial .hub {
+        position: absolute; left: 50%; top: 50%;
+        width: calc(var(--d) * 0.06); height: calc(var(--d) * 0.06);
+        transform: translate(-50%,-50%); border-radius: 50%;
+        background: radial-gradient(circle at 40% 35%, #3a3640, #0a090c);
+        box-shadow: 0 0 0 1px rgba(0,0,0,0.6);
+      }
+
+      /* ================================ keyframes (all 1s) ================================ */
+      /* No opacity animations: 1-bit-alpha GIF would turn any semi-transparent pixel fully
+         transparent. Motion is transforms + opaque color swaps only. */
+      @keyframes tvflash { 0%, 49.9% { background: var(--ink); } 50%, 100% { background: var(--red); } }
+      @keyframes pulse  { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.07); } }
+      @keyframes throb  { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+      @keyframes rock   { 0% { transform: rotate(-4deg); } 50% { transform: rotate(1.5deg); } 100% { transform: rotate(-4deg); } }
+      @keyframes spin   { from { transform: rotate(0deg); } to { transform: rotate(30deg); } }  /* 360/12 pts = seamless */
+      @keyframes glint  { 0% { background-position: 130% 0; } 55%, 100% { background-position: -130% 0; } }
+      @keyframes wiggle { 0% { transform: rotate(128deg); } 50% { transform: rotate(143deg); } 100% { transform: rotate(128deg); } }
+
+      /* Live-preview grid when opened with no ?stamp= param. */
+      body.preview { display: flex; flex-wrap: wrap; gap: 14px; align-content: center; padding: 24px; }
+      body.preview .stamp { display: grid; width: 150px; height: 150px; outline: 1px dashed rgba(0,0,0,.15); }
+    </style>
+  </head>
+  <body>
+    <div class="stamp as-seen-on-tv" data-stamp="as-seen-on-tv">
+      <div class="seal"><div class="face">As Seen<b>On TV</b></div></div>
+    </div>
+
+    <div class="stamp alert" data-stamp="alert">
+      <div class="seal"><div class="face"><b>!</b></div></div>
+    </div>
+
+    <div class="stamp call-now" data-stamp="call-now">
+      <div class="seal"><div class="face">Call<b>Now!</b></div></div>
+    </div>
+
+    <div class="stamp but-wait" data-stamp="but-wait">
+      <div class="tag">But Wait!</div>
+    </div>
+
+    <div class="stamp free" data-stamp="free">
+      <div class="seal"><div class="face"><span class="strike">$499</span><b>Free</b><span class="tiny">Today Only</span></div></div>
+    </div>
+
+    <div class="stamp slopdial" data-stamp="slopdial">
+      <div class="dial">
+        <div class="redline"></div>
+        <div class="num" style="--a:-135deg"><b>1</b></div>
+        <div class="num" style="--a:-108deg"><b>2</b></div>
+        <div class="num" style="--a:-81deg"><b>3</b></div>
+        <div class="num" style="--a:-54deg"><b>4</b></div>
+        <div class="num" style="--a:-27deg"><b>5</b></div>
+        <div class="num" style="--a:0deg"><b>6</b></div>
+        <div class="num" style="--a:27deg"><b>7</b></div>
+        <div class="num" style="--a:54deg"><b>8</b></div>
+        <div class="num" style="--a:81deg"><b>9</b></div>
+        <div class="num" style="--a:108deg"><b>10</b></div>
+        <div class="num hot" style="--a:135deg"><b>11</b></div>
+        <div class="knob"><i class="pointer"></i><i class="hub"></i></div>
+      </div>
+    </div>
+
+    <div class="stamp guaranteed" data-stamp="guaranteed">
+      <div class="seal">
+        <div class="rosette">
+          <div class="face">100%<small>Safe</small></div>
+          <i class="glint"></i>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const q = new URLSearchParams(location.search);
+      const only = q.get("stamp");
+      const f = q.get("f");
+      if (only) {
+        const el = document.querySelector('.stamp[data-stamp="' + only + '"]');
+        if (el) el.style.display = "grid";
+        if (f !== null) {
+          document.documentElement.style.setProperty("--f", f);
+          document.documentElement.setAttribute("data-frozen", "");
+        }
+      } else {
+        // no stamp requested -> live preview grid of everything
+        document.body.classList.add("preview");
+      }
+    </script>
+  </body>
+</html>

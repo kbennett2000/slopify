@@ -2,7 +2,7 @@
   <a href="docs/AS-SEEN-ON-TV.md"><img src="assets/banner.png" width="100%" alt="SLOPIFY — Stop Doing It Yourself! Type something mundane and get back an over-the-top, transparently satirical AI-slop clickbait post. As Seen On TV. The knob goes to 11." /></a>
 </p>
 
-# Slopify 🚨
+# Slopify <img src="assets/emoji/as-seen-on-tv.gif" height="40" alt="🚨" align="middle">
 
 ### *STOP DOING IT YOURSELF!* — the machine that turns a shrug into a SPECTACLE
 
@@ -11,7 +11,7 @@
 NASA, a weeping stranger, a ✅ stats block, and fifteen hashtags comes out. The kernel is always
 still in there — it just… **ASCENDED.** ☀️📈
 
-> **🚨 THE HONEST PART (this bit is load-bearing):** It's a joke. The whole point is that the
+> <img src="assets/emoji/alert.gif" height="30" alt="🚨" align="middle"> **THE HONEST PART (this bit is load-bearing):** It's a joke. The whole point is that the
 > output is *transparently* fake — nobody could mistake it for real. That obvious absurdity is also
 > exactly what keeps it safe.
 
@@ -20,7 +20,7 @@ still in there — it just… **ASCENDED.** ☀️📈
 
 ---
 
-## 📞 Try it — OPERATORS ARE STANDING BY
+## <img src="assets/emoji/call-now.gif" height="36" alt="📞" align="middle"> Try it — OPERATORS ARE STANDING BY
 
 In Claude Code, from this folder:
 
@@ -34,7 +34,7 @@ You'll get **one** finished post. Want to watch it build from a normal sentence 
 slop? Say **"show the ladder."** Want it shorter or calmer? **"3 passes,"** **"final only,"**
 **"longer each pass"** — it adjusts on the fly.
 
-## 🖥️ BUT WAIT — THERE'S A WEB UI!
+## <img src="assets/emoji/but-wait.gif" height="34" alt="🖥️" align="middle"> BUT WAIT — THERE'S A WEB UI!
 
 A first-slice web UI now lives in [`web/`](web/) — a local page that slopifies through your
 **Claude subscription** (no API key, no config), now wearing its own gloriously over-the-top
@@ -51,7 +51,7 @@ It installs itself on the first run, fires up the server, and flings your browse
 It still lives in Claude Code too, delivering in chat. A polished web UI remains the planned primary
 way in.
 
-## 🎁 It's also two other things (STILL FREE!)
+## <img src="assets/emoji/free.gif" height="36" alt="🎁" align="middle"> It's also two other things (STILL FREE!)
 
 Underneath the bit, this little project does double duty:
 
@@ -63,14 +63,14 @@ Underneath the bit, this little project does double duty:
   details rot into placeholders. [`docs/studying-model-collapse.md`](docs/studying-model-collapse.md)
   walks through the experiment.
 
-## ⚙️ How it works, in one breath
+## <img src="assets/emoji/slopdial.gif" height="44" alt="⚙️" align="middle"> How it works, in one breath
 
 A plain **base post** → **5 amplification passes**, each one escalating the *previous* pass's text
 (never restarting from scratch) along a taxonomy of engagement-bait tells, until it hits maximum
 slop. Only the last pass is delivered. Full methodology:
 [`docs/slopify_model_v1.0.md`](docs/slopify_model_v1.0.md).
 
-## 🛡️ Guardrails
+## <img src="assets/emoji/guaranteed.gif" height="38" alt="🛡️" align="middle"> Guardrails
 
 Comedy only. It stays cartoonish on purpose: no realistic false claims about real named people,
 and in sensitive areas (health, money, politics, disasters) any fake "authority" or "statistics"
