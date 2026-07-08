@@ -11,7 +11,7 @@
  * PATH and the Impact font installed. Commit the resulting *.gif alongside this script.
  */
 import { execFile } from "node:child_process";
-import { mkdtemp, rm, mkdir, stat, readdir } from "node:fs/promises";
+import { mkdtemp, rm, mkdir, stat, readdir, copyFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -25,15 +25,15 @@ const SRC_URL = new URL("./stamps.src.html", import.meta.url).href;
 const SIZE_WARN = 100 * 1024; // flag any GIF over ~100 KB
 
 // name → render box (CSS px), frame count, and playback fps (loop = frames / fps seconds).
-// diff:true enables the cross-frame GIF diff — only safe when the opaque silhouette never
-// changes (e.g. the SlopDial's disc; the knob moves over an opaque face), else it leaves trails.
+// Every stamp encodes as full, self-contained frames (see encode()), so there is no per-stamp
+// diff config: a transparent badge whose silhouette moves can never leave onion-skin trails.
 const STAMPS = [
-  { name: "as-seen-on-tv", w: 122, h: 122, frames: 2, fps: 2, diff: true }, // color flash, fixed shape
+  { name: "as-seen-on-tv", w: 122, h: 122, frames: 2, fps: 2 }, // color flash, fixed shape
   { name: "alert", w: 122, h: 122, frames: 12, fps: 12 },
   { name: "call-now", w: 122, h: 122, frames: 12, fps: 12 },
   { name: "but-wait", w: 236, h: 120, frames: 12, fps: 12 },
   { name: "free", w: 122, h: 122, frames: 12, fps: 12 },
-  { name: "slopdial", w: 142, h: 142, frames: 12, fps: 12, diff: true }, // disc is static, pointer sweeps
+  { name: "slopdial", w: 142, h: 142, frames: 12, fps: 12 }, // disc is static, pointer sweeps
   { name: "guaranteed", w: 124, h: 124, frames: 15, fps: 15 },
 ];
 
@@ -65,8 +65,15 @@ async function shot(stamp, f, outPng, userDataDir) {
 async function encode(stamp, frameDir, outGif) {
   // Flat palette (dither=none) keeps large color areas from turning into compression-hostile
   // noise; alpha_threshold binarizes the alpha so 1-bit-GIF transparency stays clean.
-  // `-gifflags -transdiff` writes each frame in full (no cross-frame diff): with transparent
-  // frames whose opaque silhouette moves (scale/rotate), a diff would leave onion-skin trails.
+  //
+  // `-gifflags -offsetting-transdiff` is load-bearing: it disables BOTH ffmpeg gif
+  // optimizations so every frame is a full-canvas, self-contained image (no bounding-box crop,
+  // no cross-frame transparency diff). ffmpeg still tags frames "restore to background" — but
+  // because each frame repaints the whole canvas, that clear-to-transparent is harmless. Without
+  // this, cropped frames + restore-to-background leave the wiped rectangle un-repainted, which
+  // reads as black flicker over GitHub's dark README ("blackspace") and onion-skin trails on the
+  // moving stamps. Full frames cost inter-frame compression (watch SIZE_WARN); the smaller diffed
+  // encoding is not worth re-breaking compositing for.
   const filter =
     "[0:v]split[a][b];" +
     "[a]palettegen=max_colors=64:reserve_transparent=1:stats_mode=full[p];" +
@@ -76,21 +83,78 @@ async function encode(stamp, frameDir, outGif) {
     "-framerate", String(stamp.fps),
     "-i", join(frameDir, "f_%03d.png"),
     "-filter_complex", filter,
-    "-gifflags", stamp.diff ? "+transdiff" : "-transdiff",
+    "-gifflags", "-offsetting-transdiff",
     "-loop", "0",
     outGif,
   ]);
 }
 
+// Opaque-content height (px) of a rendered frame, via ffmpeg's alpha bounding box. Headless
+// Chrome occasionally screenshots a frame before its clip-path / mask / gradient layers finish
+// compositing, leaving a blank or half-painted still. None of the stamp animations ever shrink a
+// badge (pulses only scale up, the rest rotate/recolor), so a frame much shorter than its peers
+// is always such a bad capture — this lets renderStamp detect and re-shoot them.
+async function opaqueHeight(png) {
+  try {
+    const { stderr } = await run("ffmpeg", [
+      "-hide_banner", "-i", png,
+      "-vf", "alphaextract,cropdetect=limit=16:round=2:skip=0:reset=0",
+      "-frames:v", "1", "-f", "null", "-",
+    ]);
+    const m = [...stderr.matchAll(/crop=\d+:(\d+):/g)].pop();
+    return m ? parseInt(m[1], 10) : 0;
+  } catch {
+    return 0; // treat an unreadable/alpha-less frame as degenerate -> re-shoot
+  }
+}
+
 async function renderStamp(stamp) {
   const frameDir = await mkdtemp(join(tmpdir(), `stamp-${stamp.name}-`));
   const udd = await mkdtemp(join(tmpdir(), `chrome-${stamp.name}-`));
+  const png = (i) => join(frameDir, `f_${String(i).padStart(3, "0")}.png`);
+  const phase = (i) => i / stamp.frames; // 0..1 (never 1, which == 0)
+  // Every screenshot gets its own cold profile subdir (reusing one warm profile makes Chrome
+  // restore stale window metrics and render the badge undersized). A counter keeps re-shoots cold
+  // too. Cold starts are race-prone, which the re-shoot safety net below cleans up.
+  let shotN = 0;
+  const shoot = (i) => shot(stamp, phase(i), png(i), join(udd, String(shotN++)));
   try {
-    for (let i = 0; i < stamp.frames; i++) {
-      const f = i / stamp.frames; // phase 0..1 (never 1, which == 0)
-      const png = join(frameDir, `f_${String(i).padStart(3, "0")}.png`);
-      await shot(stamp, f, png, join(udd, String(i)));
+    for (let i = 0; i < stamp.frames; i++) await shoot(i);
+
+    // Safety net: re-shoot any frame the compositor race left blank/half-painted. The tallest
+    // frame is a complete paint; anything under 80% of it is degenerate (legit motion never
+    // shrinks a badge below ~88% — the widest is the BUT WAIT rock). Converges in 1–2 passes.
+    const heights = [];
+    for (let i = 0; i < stamp.frames; i++) heights.push(await opaqueHeight(png(i)));
+    const ref = Math.max(...heights, 1);
+    for (let pass = 0; pass < 10; pass++) {
+      const bad = heights.flatMap((h, i) => (h < 0.8 * ref ? [i] : []));
+      if (!bad.length) break;
+      if (pass === 9) {
+        console.log(`  ⚠ ${stamp.name}: ${bad.length} frame(s) still degenerate: ${bad.join(",")}`);
+        break;
+      }
+      for (const i of bad) {
+        await shoot(i);
+        heights[i] = await opaqueHeight(png(i));
+      }
     }
+
+    // Last-resort guardrail: if a frame is *still* degenerate after every re-shoot (rare, only
+    // under heavy machine load), never let it ship as a black flash — clone the nearest good
+    // frame over it. Worst case is an imperceptible 1-frame hold instead of a hole in the loop.
+    for (const i of heights.flatMap((h, i) => (h < 0.8 * ref ? [i] : []))) {
+      let src = -1;
+      for (let d = 1; d < stamp.frames && src < 0; d++) {
+        if (i - d >= 0 && heights[i - d] >= 0.8 * ref) src = i - d;
+        else if (i + d < stamp.frames && heights[i + d] >= 0.8 * ref) src = i + d;
+      }
+      if (src >= 0) {
+        await copyFile(png(src), png(i));
+        console.log(`  ↺ ${stamp.name}: cloned frame ${src} over un-renderable frame ${i}`);
+      }
+    }
+
     const outGif = fileURLToPath(new URL(`${stamp.name}.gif`, OUT_DIR));
     await encode(stamp, frameDir, outGif);
     const { size } = await stat(outGif);

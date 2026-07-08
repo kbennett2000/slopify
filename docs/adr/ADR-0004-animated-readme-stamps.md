@@ -73,3 +73,28 @@ Concrete choices:
   text falls back to Arial Black and looks off.
 - **Note:** presentation only. This changes no execution rule, so the model doc stays at **v1.0** and
   the skill's version line is unchanged — no version bump.
+
+## Correction — 2026-07-08 · encoder + capture fixes (still v1.0, presentation-only)
+
+The first cut of the stamps rendered badly on GitHub: **black flicker on the dark theme
+("blackspace") and choppy holes / onion-skin trails.** Two independent bugs in `render.mjs`, both
+now fixed; `stamps.src.html`, the README markup, and the stamp inventory are unchanged.
+
+1. **Frame disposal (the "blackspace").** `encode()` let ffmpeg crop each frame to its changed-pixel
+   bounding box *and* tag it "restore to background." On a transparent looping badge that clears
+   each frame's rectangle to transparent before the next (cropped) frame draws, leaving the un-
+   repainted remainder — which reads as **black over the dark README**, and as onion-skin trails on
+   the moving stamps. Fix: encode **full, self-contained frames** with `-gifflags -offsetting-transdiff`
+   (no crop, no cross-frame diff); each frame repaints the whole canvas, so the background-clear is
+   harmless. The per-stamp `diff` config is gone — every stamp encodes uniformly. Cost is lost
+   inter-frame compression (~432 KB → ~496 KB total; all stamps stay within budget), accepted for
+   correctness.
+2. **Headless-Chrome capture race (the "choppy").** Each frame is screenshot in a cold Chrome, which
+   occasionally captured *before* the expensive clip-path / mask / gradient layers finished
+   compositing — yielding a blank or half-painted still that flickered once per loop (non-
+   deterministic; the bad frame moved run to run). Since no stamp animation ever shrinks a badge,
+   `renderStamp()` now measures each frame's opaque height (via ffmpeg's alpha bounding box) and
+   **re-shoots any frame under 80 % of the tallest**, with a last-resort guardrail that clones the
+   nearest good frame over any still-degenerate one so a hole can never ship.
+
+Regenerate as before — `node assets/emoji/render.mjs` — now self-validating and reproducible.
