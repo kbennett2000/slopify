@@ -401,6 +401,32 @@
       }
       #copy:hover { background: #ffe14d; }
       #copy:active { transform: translate(3px, 3px); box-shadow: none; }
+
+      /* result actions: refeed + copy cluster to the right of the title */
+      .cert-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+      /* the model-collapse round counter — climbs with every refeed */
+      .gen-badge {
+        font: 700 0.8rem/1.1 var(--display);
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        color: #fff;
+        background: var(--pink);
+        border: 3px solid var(--ink);
+        border-radius: 999px;
+        padding: 4px 10px;
+        box-shadow: 3px 3px 0 var(--ink);
+      }
+      /* subtle pink glow to SELL the refeed button (glow only — keeps :active press) */
+      #refeed { animation: refeed-pulse 1.6s ease-in-out infinite; }
+      @keyframes refeed-pulse {
+        50% { box-shadow: 3px 3px 0 var(--ink), 0 0 16px rgba(255, 45, 149, 0.7); }
+      }
+      .refeed-note {
+        text-align: center;
+        color: #5a4a10;
+        font-weight: 700;
+        margin: 10px 0 0;
+      }
       #out {
         min-height: 300px;
         white-space: pre-wrap;
@@ -540,7 +566,7 @@
       /* respect reduced-motion: keep the loud LOOK, drop the moving parts */
       @media (prefers-reduced-motion: reduce) {
         .ticker .track { animation: none; padding-left: 0; }
-        .asseen, .butwait, #go { animation: none !important; }
+        .asseen, .butwait, #go, #refeed { animation: none !important; }
         .dial-knob { transition: none; }
       }
     </style>
@@ -622,7 +648,19 @@
       <section class="card">
         <div class="cert-head">
           <span class="cert-title">◆ Certificate of Premium Artisanal Slop ◆</span>
-          <button id="copy" type="button" hidden>Grab It — It's FREE!</button>
+          <span id="gen-badge" class="gen-badge" hidden aria-live="polite"></span>
+          <div class="cert-actions">
+            <button
+              id="refeed"
+              type="button"
+              class="share-btn share-primary"
+              aria-label="Refeed — run this slop through Slopify again (a recursive model-collapse demo)"
+              hidden
+            >
+              ♻️ Feed It Back!
+            </button>
+            <button id="copy" type="button" hidden>Grab It — It's FREE!</button>
+          </div>
         </div>
         <label class="visually-hidden" for="out">Your slopified post</label>
         <textarea
@@ -630,6 +668,12 @@
           readonly
           placeholder="Your premium, hand-crafted, 100%-artificial slop materializes right here…"
         ></textarea>
+
+        <p class="refeed-note" hidden>
+          ♻️ <strong>Feed It Back</strong> re-runs this slop through <em>itself</em> — a live
+          <strong>model-collapse</strong> demo. Each round it gets
+          <strong>emptier, not better</strong>. That's the point.
+        </p>
 
         <div class="share-row" id="share" role="group" aria-label="Share your slop" hidden>
           <span class="share-lbl">Blast it to all 11 feeds:</span>
@@ -700,6 +744,12 @@
       const knob = dial.querySelector(".dial-knob");
       const ring = dial.querySelector(".dial-ring");
       const confettiLayer = document.getElementById("confetti");
+      const refeedBtn = document.getElementById("refeed");
+      const refeedNote = document.querySelector(".refeed-note");
+      const genBadge = document.getElementById("gen-badge");
+
+      let isGenerating = false; // one in-flight guard: go click, ⌘/Ctrl+Enter, and refeed
+      let generation = 0; // model-collapse round counter (0 = fresh; climbs on each refeed)
 
       const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
@@ -836,18 +886,55 @@
         el.classList.add("shake");
       }
 
-      // ---- The actual slopify call (same /api/slopify contract) ----
-      async function slopify() {
-        const kernel = kernelEl.value.trim();
-        if (!kernel) {
-          kernelEl.focus();
-          shake(kernelEl);
+      // Update the collapse round counter badge (hidden until the first result).
+      function updateGenBadge() {
+        if (generation < 1) {
+          genBadge.hidden = true;
           return;
         }
+        genBadge.textContent =
+          generation === 1
+            ? "Generation 1"
+            : "Generation " + generation + " · IT'S GETTING WORSE™";
+        genBadge.hidden = false;
+      }
+
+      // ---- The actual slopify call (same /api/slopify contract) ----
+      // refeed:true re-runs the LAST OUTPUT as the next kernel — a one-click
+      // model-collapse loop (post₂ = slopify(post₁)). Options object, not a
+      // positional kernel: the go button passes it straight to addEventListener,
+      // which would otherwise hand us the click event as arg one.
+      async function slopify({ refeed = false } = {}) {
+        if (isGenerating) return; // one guard for go / ⌘-Enter / refeed
+
+        let kernel;
+        if (refeed) {
+          const carried = outEl.value.trim();
+          // no-op on an empty box or a prior error (errors are written "⚠️  …")
+          if (!carried || carried.startsWith("⚠")) {
+            shake(outEl);
+            return;
+          }
+          kernelEl.value = carried; // visibly feed the output back into the input
+          kernel = carried;
+        } else {
+          kernel = kernelEl.value.trim();
+          if (!kernel) {
+            kernelEl.focus();
+            shake(kernelEl);
+            return;
+          }
+          generation = 0; // a fresh, hand-typed kernel starts a new cascade
+        }
+
+        isGenerating = true;
         ensureAudio(); // unlock audio inside this user gesture
         goBtn.disabled = true;
         goLabel.textContent = "Cranking to 11…";
+        kernelEl.readOnly = true; // lock (don't grey) the input while it runs
         copyBtn.hidden = true;
+        refeedBtn.hidden = true;
+        refeedNote.hidden = true;
         shareRow.hidden = true;
         outEl.value = "";
         try {
@@ -859,22 +946,36 @@
           const data = await res.json().catch(() => ({}));
           if (!res.ok) throw new Error(data.error || "Request failed.");
           outEl.value = data.post;
+          generation += 1; // 1 after a fresh run, 2+ once you start refeeding
+          updateGenBadge();
           copyBtn.hidden = false;
+          refeedBtn.hidden = false;
+          refeedNote.hidden = false;
           refreshShareLinks();
           shareRow.hidden = false;
           ding();
           confettiBurst();
         } catch (err) {
-          outEl.value = "⚠️  " + err.message;
+          outEl.value = "⚠️  " + err.message; // refeed stays hidden after an error
         } finally {
+          isGenerating = false;
           goBtn.disabled = false;
           goLabel.textContent = "Slopify It Now!!!";
+          kernelEl.readOnly = false;
         }
       }
 
-      goBtn.addEventListener("click", slopify);
+      goBtn.addEventListener("click", () => slopify()); // arrow: keep the click event out of options
       kernelEl.addEventListener("keydown", (e) => {
-        if ((e.metaKey || e.ctrlKey) && e.key === "Enter") slopify();
+        if ((e.metaKey || e.ctrlKey) && e.key === "Enter") slopify(); // now guarded by isGenerating
+      });
+      refeedBtn.addEventListener("click", () => slopify({ refeed: true }));
+      // A hand-edited kernel starts a new cascade — drop the collapse counter.
+      kernelEl.addEventListener("input", () => {
+        if (!isGenerating) {
+          generation = 0;
+          genBadge.hidden = true;
+        }
       });
 
       copyBtn.addEventListener("click", async () => {

@@ -26,7 +26,8 @@ your browser:
 - **Linux** — `./start.sh`
 - **Any OS, from a terminal** — `node start.mjs` (or `npm start`)
 
-Type something mundane, hit **Slopify** (~15–30s), then **Copy** or share.
+Type something mundane, hit **Slopify** (~15–30s), then **Copy**, share, or hit
+**♻️ Feed It Back** to run the result through slopify *again* — a one-click model-collapse demo.
 
 > First run downloads the Claude Agent SDK (~250 MB, one time only). **No API key, no `.env`
 > needed** — signing in to Claude is the whole setup.
@@ -50,5 +51,12 @@ Type something mundane, hit **Slopify** (~15–30s), then **Copy** or share.
 - **Speed vs. fidelity:** by default `THINKING = "disabled"` in `server.js` — the model emits the
   full maximum-slop post in one shot (~15–30s). Set it to `"adaptive"` to have the model think
   through the compounding passes (higher fidelity to the literal ladder, but ~80–100s).
-- **Scope:** this first slice keeps it simple — no in-UI parameter controls (passes / length / "show
-  the ladder" / platform), no streaming, no deploy config yet.
+- **Refeed (♻️ Feed It Back):** once a post exists, one click runs *it* back through slopify as the
+  next kernel — you watch the finished post get copied into the input, locked, and re-slopified, with
+  a **Generation N** counter climbing each round. It's the one-click version of the
+  [model-collapse loop](../docs/studying-model-collapse.md): the specifics hollow out into
+  placeholders while the format survives ([what am I looking at?](../docs/what-am-i-looking-at.md)).
+  Front-end only — the endpoint is unchanged ([ADR-0005](../docs/adr/ADR-0005-refeed-button.md)).
+- **Scope:** this first slice keeps it simple — **Refeed** (above) is the one interactive control;
+  there are still no in-UI *parameter* controls (passes / length / "show the ladder" / platform), no
+  streaming, no deploy config yet.

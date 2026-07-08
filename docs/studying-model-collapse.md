@@ -39,13 +39,25 @@ is exactly the good part). After a couple of rounds it starts hollowing out:
   left to emphasize."
 
 That progression — form outliving content — is the intuition behind model collapse, made visible
-in a handful of steps.
+in a handful of steps. Real runs are often wilder than this tidy description: see
+[`sample/collapse-run.md`](sample/collapse-run.md) for a captured cascade that escalates for six
+rounds, then *forgets its own topic entirely* (a "cake" seed reincarnates as a shoe-store ad)
+before briefly freezing into a fixed point.
 
 ## Running it
 
-- Kick off a normal run, then paste the result back as the next kernel — or just ask: *"slopify
-  that, then slopify the result, five times, and show me each round."* Read the rounds side by
-  side; the decay is usually obvious by round three or four.
+- **In the web UI, hit the ♻️ Feed It Back button.** After a normal run, one click feeds the
+  finished post back in as the next kernel — you watch it get copied into the input box, locked, and
+  re-slopified, with a **Generation N** counter climbing each round. It's the one-click version of
+  the loop above; keep clicking and watch the decay set in. (It only automates the loop — see
+  [`ADR-0005`](adr/ADR-0005-refeed-button.md).)
+- **See a real captured run.** [`sample/collapse-run.md`](sample/collapse-run.md) records an actual
+  cascade — the seed "I like cake." refed through the backend, version by version, until the
+  transform stops changing the text. Read it top to bottom to watch the specifics drain while the
+  format holds.
+- In chat, kick off a normal run, then paste the result back as the next kernel — or just ask:
+  *"slopify that, then slopify the result, five times, and show me each round."* Read the rounds side
+  by side; the decay is usually obvious by round three or four.
 - To watch escalation *within* a single run instead, turn on `show_intermediate` ("show the
   ladder") — that reveals the base → pass-5 climb, the compounding direction rather than the
   collapsing one. The two views are worth contrasting: one run *builds* detail; the loop *drains*
@@ -57,6 +69,8 @@ This is a **demonstration, not a measurement.** It's a fast, legible way to buil
 what collapse *feels* like — not a controlled study, and slopify's parody register exaggerates the
 effect. Treat the output as a teaching aid and a conversation starter, not as data.
 
-A dedicated "recursion / collapse mode" (fixed seeds, a diversity metric, structured logging)
-would be a real feature — and a **methodology version bump** (`v1.1`), not an ad-hoc tweak. Until
-then, the loop above is the experiment.
+The **♻️ Feed It Back** button just automates the loop — one click instead of copy-paste — so it's a
+UI convenience over existing behavior, not a methodology change (no version bump; see
+[`ADR-0005`](adr/ADR-0005-refeed-button.md)). A dedicated "recursion / collapse mode" (fixed seeds, a
+diversity metric, structured logging) would be more — a **methodology version bump** (`v1.1`), not an
+ad-hoc tweak. Until then, the loop — now one click — is the experiment.

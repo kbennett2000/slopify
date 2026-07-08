@@ -30,6 +30,11 @@ That terminal state — where the transformation stops having any effect — is 
 a bug. It's the whole point of the demo. You've just watched a small, legible
 version of a real and well-documented phenomenon.
 
+*Want a real one? [`sample/collapse-run.md`](sample/collapse-run.md) is an actual captured
+cascade — messier and wilder than this idealized arc. It escalates, **forgets its own topic
+entirely** (a "cake" seed reincarnates, mid-run, as a shoe-store ad), briefly freezes into a
+fixed point, then escalates again. The arc above is the clean sketch; that file is the weather.*
+
 ---
 
 ## The name for this: model collapse
@@ -156,18 +161,27 @@ mode to *manage*, not an inevitability to dread.
 
 ## Try it yourself
 
-*Turn the knobs. For science.* The app exposes the science as controls:
+*Turn the knobs. For science.* The web UI now ships the **first** of these controls; the rest
+are the roadmap:
 
-- **Seed choice** — run cascades from very different starting posts (sincere vs.
-  absurdist vs. self-referential) and compare where they end up. Genuinely open
-  question you can poke at: is the final attractor seed-*invariant* or
-  seed-*determined*?
-- **Pass count & length-growth** — expose the parameters and watch the phase
-  transition slide earlier or later.
-- **"Inject fresh data" toggle** — reintroduce a brand-new real seed every few
-  passes and watch collapse get *arrested*. This is a live, playable
-  demonstration of the Gerstgrasser "accumulate, don't replace" result — the same
-  app that shows you the disease shows you the cure.
+- **♻️ Feed It Back — live now.** After any run, one click refeeds the output as the next kernel
+  and a **Generation N** counter climbs — the self-consuming loop this whole page describes, one
+  click at a time. A real captured cascade, annotated version by version, is in
+  [`sample/collapse-run.md`](sample/collapse-run.md). One honest caveat: each in-UI run is a
+  one-shot Pass-5 (the backend re-maxes every call, thinking off), so what you're watching is the
+  **outer** post→post loop, not compounding inside a single run.
+- **Seed choice — you already have this** (just type a different kernel). Run cascades from very
+  different starting posts and compare where they end up. The open question — is the final attractor
+  seed-*invariant* or seed-*determined*? — is now something you can actually poke at, and early hand
+  runs suggest **seed-sensitive**: a bland "today is a nice sunny day" froze into a near-fixed-point
+  within a round or two, while "I like cake" escalated for six rounds and then *crashed* — losing its
+  topic entirely and reincarnating as an ad for a shoe store (see the captured run). Same loop,
+  wildly different fate.
+- **Pass count & length-growth — roadmap.** Expose the parameters and watch the phase transition
+  slide earlier or later.
+- **"Inject fresh data" toggle — roadmap.** Reintroduce a brand-new real seed every few passes and
+  watch collapse get *arrested*. This is a live, playable demonstration of the Gerstgrasser
+  "accumulate, don't replace" result — the same app that shows you the disease shows you the cure.
 
 ---
 
