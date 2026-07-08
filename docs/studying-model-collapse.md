@@ -1,0 +1,62 @@
+# Studying model collapse with slopify
+
+*Watch our flagship product EAT ITSELF, live! Results not typical!\* (\*Results extremely typical.)*
+
+**Model collapse** is what happens when a generative model runs on its own outputs, repeatedly:
+quality degrades, diversity shrinks, and detail erodes toward a bland, self-referential average.
+Slopify is a small, vivid, hands-on way to watch a version of that happen — no training run
+required.
+
+## The setup
+
+Slopify normally **compounds**: each pass escalates the previous pass's text, so a single run gets
+*more*. The collapse experiment does something different — it puts slopify in a **loop against its
+own finished output**:
+
+```
+kernel₀ = "a nice sunny day"
+post₁   = slopify(kernel₀)      # one full run
+post₂   = slopify(post₁)        # feed the finished post back in as the next kernel
+post₃   = slopify(post₂)
+...
+```
+
+Each finished post becomes the next run's kernel. You're no longer amplifying a fact — you're
+amplifying an amplification, and then amplifying *that*.
+
+## What you'll see
+
+It does **not** keep getting louder. **BUT WAIT — it gets *worse*** (which, for a collapse demo,
+is exactly the good part). After a couple of rounds it starts hollowing out:
+
+- **The shape survives.** There's still a hook, still numbered beats, still a weeping stranger,
+  still a ✅ stats block. The *format* is stable — it's the last thing to go.
+- **The specifics rot into placeholders.** The stranger loses his face and weeps "in the style of
+  weeping." The number that was "47 winters" drifts to "40," then "50," then just `[NUMBER]`. The
+  coffee shop becomes "a placeholder for a coffee shop."
+- **Detail is replaced by the *idea* of detail.** Every metaphor becomes a metaphor for the
+  previous metaphor. The post grows longer and says less — "the reflex of emphasis with nothing
+  left to emphasize."
+
+That progression — form outliving content — is the intuition behind model collapse, made visible
+in a handful of steps.
+
+## Running it
+
+- Kick off a normal run, then paste the result back as the next kernel — or just ask: *"slopify
+  that, then slopify the result, five times, and show me each round."* Read the rounds side by
+  side; the decay is usually obvious by round three or four.
+- To watch escalation *within* a single run instead, turn on `show_intermediate` ("show the
+  ladder") — that reveals the base → pass-5 climb, the compounding direction rather than the
+  collapsing one. The two views are worth contrasting: one run *builds* detail; the loop *drains*
+  it.
+
+## Honest framing
+
+This is a **demonstration, not a measurement.** It's a fast, legible way to build intuition for
+what collapse *feels* like — not a controlled study, and slopify's parody register exaggerates the
+effect. Treat the output as a teaching aid and a conversation starter, not as data.
+
+A dedicated "recursion / collapse mode" (fixed seeds, a diversity metric, structured logging)
+would be a real feature — and a **methodology version bump** (`v1.1`), not an ad-hoc tweak. Until
+then, the loop above is the experiment.

@@ -1,0 +1,17 @@
+{
+  "name": "slopify-web",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Local web UI for slopify — a thin backend that runs the real slopify skill through the Claude API.",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.3.203",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1"
+  }
+}
