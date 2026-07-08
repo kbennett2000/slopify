@@ -11,9 +11,38 @@
 NASA, a weeping stranger, a ✅ stats block, and fifteen hashtags comes out. The kernel is always
 still in there — it just… **ASCENDED.** ☀️📈
 
-> <img src="assets/emoji/alert.gif" height="30" alt="🚨" align="middle"> **THE HONEST PART (this bit is load-bearing):** It's a joke. The whole point is that the
+> <img src="assets/emoji/alert.gif" height="30" alt="🚨" align="middle"> **THE HONEST PART (this is the whole point):** It's a joke. The whole point is that the
 > output is *transparently* fake — nobody could mistake it for real. That obvious absurdity is also
 > exactly what keeps it safe.
+
+<details>
+<summary><b>🎓 In all seriousness…</b> — under the bit, this is a real teaching tool (click to expand)</summary>
+
+<br>
+
+Take away the confetti and Slopify is two genuinely useful things:
+
+**1. A reference implementation of a Claude Code Skill.** Curious how "skills" actually work — what
+they are, how Claude decides to use one, and how this entire tool is just a Markdown file with *no
+code*? This is a small, complete, readable example, written for developers who may be new to
+AI-assisted development. It tours *this* skill and shows you how to build your own.
+→ **[Read the developer walkthrough](docs/for-developers.md)**
+
+**2. A hands-on way to watch "model collapse."** Feed an AI's own output back into itself, round
+after round, and it doesn't get louder — it *hollows out*, keeping the shape while the specifics
+decay into placeholders. Slopify lets you **watch that happen** in a few clicks. No prior AI
+knowledge assumed.
+→ **[What am I looking at? — the science, in plain English](docs/what-am-i-looking-at.md)** ·
+[how to run the experiment](docs/studying-model-collapse.md) ·
+[a captured 16-generation run](docs/sample/collapse-run.md)
+
+<p align="center">
+  <img src="assets/ui/collapse.png" width="66%" alt="Generation 6 of a Slopify feedback loop: the post has decayed into 'Sky: SKY', 'Vibes: VIBES', 'The thing: THE THING' — the format survives, the meaning is gone." />
+  <br>
+  <em>Generation 6 of feeding Slopify its own output: the format survives, the meaning collapses.</em>
+</p>
+
+</details>
 
 *Want the full 2am-infomercial sales pitch, complete with SlopStream™ and a knob that goes to 11?*
 **→ [READ THE BROCHURE](docs/AS-SEEN-ON-TV.md) ←**
@@ -22,46 +51,70 @@ still in there — it just… **ASCENDED.** ☀️📈
 
 ## <img src="assets/emoji/call-now.gif" height="36" alt="📞" align="middle"> Try it — OPERATORS ARE STANDING BY
 
-In Claude Code, from this folder:
+The main way in is the **web UI**: one box, one button, one glorious pile of slop. It runs on
+**your Claude subscription** — no API key, no config — and comes fully loaded (the knob goes to 11,
+and yes, there's confetti).
+
+<p align="center">
+  <img src="assets/ui/hero.png" width="82%" alt="The Slopify web UI: a bright infomercial page with a text box, the SlopDial amp knob cranked to 11, and a giant SLOPIFY IT NOW!!! button." />
+</p>
+
+**Up and running in about two minutes:** grab **[Node.js](https://nodejs.org) 18+**, sign in with
+`claude login`, then start the machine —
+
+- **macOS:** double-click `web/start.command` · **Windows:** double-click `web/start.bat` ·
+  **Linux:** `web/start.sh` · **any OS, terminal:** `node web/start.mjs`
+
+It installs itself on the first run, boots the server, and flings your browser open to the slop.
+**→ Full step-by-step install for Windows / macOS / Linux: [`docs/install.md`](docs/install.md).**
+
+> <img src="assets/emoji/alert.gif" height="22" alt="🚨" align="middle"> **You need a Claude subscription** (Claude Pro or Max — they include Claude Code). No plan, no
+> slop: it won't run without a `claude login`. [Get Claude Code](https://claude.com/claude-code).
+
+Type something mundane, smash the button (~15–30s), and watch it ASCEND — confetti and all:
+
+<p align="center">
+  <img src="assets/ui/app-in-action.gif" width="82%" alt="Animated demo of the Slopify web UI: a sunny-day slop post materializes in the result card with confetti and a Generation 1 badge." />
+</p>
+
+## <img src="assets/emoji/but-wait.gif" height="32" alt="🤯" align="middle"> BUT WAIT — watch it ASCEND · BEFORE ▸ AFTER
+
+Three words go in. A confectionery epic comes out. **The kernel always survives — it just puts on a
+cape.**
+
+<table>
+<tr>
+<th width="27%">🥱 THE BEFORE</th>
+<th width="73%">🤯 THE AFTER</th>
+</tr>
+<tr>
+<td valign="top"><br><b>I like cake.</b><br><br><sub>(three words)</sub></td>
+<td valign="top">
+🍰🍰🍰 STOP SCROLLING. What happened when I sat down with a slice of CAKE today will RESTRUCTURE your entire understanding of dessert 🍰🚨<br>
+🧵 A THREAD that Big Bakery PRAYED you'd never read 🥖🚫<br>
+1️⃣ I woke up. Same broken, hopeless, cake-less existence as always. 💔<br>
+2️⃣ I took the first bite. The room went SILENT. Time did not pass — it 𝐋𝐀𝐘𝐄𝐑𝐄𝐃. 🎂✨<br>
+3️⃣ A stranger wept: "I FORGOT cake could taste like THIS." We ASCENDED together. 😇<br>
+📊 ✅ Moistness: IMMACULATE · ✅ Big Bakery stock: DOWN 40% 📉 · ✅ Ancestors: STILL CLAPPING 👏<br>
+<em>…and it keeps building for another 20 lines, right down to the fifteen hashtags.</em><br>
+<b><a href="docs/sample/after.md">Read the full ascension →</a></b>
+</td>
+</tr>
+</table>
+
+## <img src="assets/emoji/free.gif" height="34" alt="🎁" align="middle"> PRO MODE — run it inside Claude Code (STILL FREE!)
+
+Already living in **Claude Code**? Slopify is also a skill you can call straight from chat, from this
+folder:
 
 ```
 /slopify today is a nice sunny day
 ```
 
-or just ask: *"slopify 'Gary's Shoes, Chicago. Best in women's shoes.'"*
-
-You'll get **one** finished post. Want to watch it build from a normal sentence up to maximum
-slop? Say **"show the ladder."** Want it shorter or calmer? **"3 passes,"** **"final only,"**
-**"longer each pass"** — it adjusts on the fly.
-
-## <img src="assets/emoji/but-wait.gif" height="34" alt="🖥️" align="middle"> BUT WAIT — THERE'S A WEB UI!
-
-A first-slice web UI now lives in [`web/`](web/) — a local page that slopifies through your
-**Claude subscription** (no API key, no config), now wearing its own gloriously over-the-top
-infomercial skin (yes, the knob goes to 11, and yes, confetti).
-
-**One-time:** grab [Node.js](https://nodejs.org) 18+ and sign in to Claude (`claude login` —
-[get Claude Code](https://claude.com/claude-code) if you need it). **Then just start the machine:**
-
-- **macOS:** double-click `web/start.command` · **Windows:** double-click `web/start.bat` ·
-  **Linux:** `web/start.sh`
-- **Terminal, any OS:** `node web/start.mjs`
-
-It installs itself on the first run, fires up the server, and flings your browser open to the slop.
-It still lives in Claude Code too, delivering in chat. A polished web UI remains the planned primary
-way in.
-
-## <img src="assets/emoji/free.gif" height="36" alt="🎁" align="middle"> It's also two other things (STILL FREE!)
-
-Underneath the bit, this little project does double duty:
-
-- **A reference example for building Claude Code skills.** It's completely prompt-only — no code,
-  no dependencies — so it's an easy-to-read template for the *doc → skill → command → settings*
-  pattern. Start with [`docs/for-developers.md`](docs/for-developers.md).
-- **A way to watch model collapse.** Feed slopify's own output back in as the next input, over and
-  over, and it stops getting louder and starts getting *emptier* — the shape survives while the
-  details rot into placeholders. [`docs/studying-model-collapse.md`](docs/studying-model-collapse.md)
-  walks through the experiment.
+or just ask: *"slopify 'Gary's Shoes, Chicago. Best in women's shoes.'"* Say **"show the ladder"** to
+watch it build from a normal sentence up to maximum slop; **"3 passes,"** **"final only,"**
+**"longer each pass"** adjust it on the fly. This is the power-user path — for everyone else, the
+[web UI](docs/install.md) is the front door.
 
 ## <img src="assets/emoji/slopdial.gif" height="44" alt="⚙️" align="middle"> How it works, in one breath
 

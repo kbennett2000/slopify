@@ -7,6 +7,9 @@ quality degrades, diversity shrinks, and detail erodes toward a bland, self-refe
 Slopify is a small, vivid, hands-on way to watch a version of that happen — no training run
 required.
 
+→ Want the *why* — the actual science, in plain English, with references? See
+[**What am I looking at?**](what-am-i-looking-at.md). This page is the hands-on "how to run it" half.
+
 ## The setup
 
 Slopify normally **compounds**: each pass escalates the previous pass's text, so a single run gets

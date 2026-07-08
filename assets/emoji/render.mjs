@@ -66,7 +66,7 @@ async function encode(stamp, frameDir, outGif) {
   // Flat palette (dither=none) keeps large color areas from turning into compression-hostile
   // noise; alpha_threshold binarizes the alpha so 1-bit-GIF transparency stays clean.
   //
-  // `-gifflags -offsetting-transdiff` is load-bearing: it disables BOTH ffmpeg gif
+  // `-gifflags -offsetting-transdiff` is essential: it disables BOTH ffmpeg gif
   // optimizations so every frame is a full-canvas, self-contained image (no bounding-box crop,
   // no cross-frame transparency diff). ffmpeg still tags frames "restore to background" — but
   // because each frame repaints the whole canvas, that clear-to-transparent is harmless. Without

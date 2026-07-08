@@ -83,7 +83,7 @@ slopify(description, passes=5, length_growth=on):
     return post            # deliver final only unless show_intermediate
 ```
 
-**The load-bearing principle is iterative compounding.** `amplify` never rebuilds
+**The core principle is iterative compounding.** `amplify` never rebuilds
 from the original description — it operates on the prior pass's text and turns the
 dials up from wherever they already are. Each pass inherits everything the last
 one added and pushes further. This is why the final output feels like sediment:

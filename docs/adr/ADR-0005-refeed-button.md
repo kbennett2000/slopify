@@ -56,7 +56,7 @@ untouched.
   "worse" as a feature — which is simultaneously the joke and the literal truth of the demo — and it
   cleanly labels each round of the captured series.
 - **On-brand, but honest.** The button reuses the existing `.share-btn.share-primary` pill (no new
-  button CSS) with a subtle pink "sell" glow gated under `prefers-reduced-motion`; a load-bearing note
+  button CSS) with a subtle pink "sell" glow gated under `prefers-reduced-motion`; a key note
   under the output states plainly that it "gets emptier, not better — that's the point," and the
   button's `aria-label` carries that honest meaning for screen readers.
 - **A captured collapse series for the serious docs.** A short seed ("I like cake.") is refed through

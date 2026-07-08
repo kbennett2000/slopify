@@ -11,6 +11,9 @@ the backend shape is recorded in [ADR-0003](../docs/adr/ADR-0003-web-ui-backend.
 
 ## Run it
 
+> New here? For a plain, per-OS walkthrough (and the Claude-subscription requirement spelled out),
+> see **[docs/install.md](../docs/install.md)**. The quick version:
+
 **One-time prerequisites:**
 
 - **[Node.js](https://nodejs.org) 18+** installed.

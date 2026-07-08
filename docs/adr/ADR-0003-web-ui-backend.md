@@ -30,7 +30,7 @@ system prompt**, wrapped only by a thin adapter instruction (the same orchestrat
 Concrete choices for the first slice:
 
 - **Claude Agent SDK (`@anthropic-ai/claude-agent-sdk`), not the raw Messages API.** This is the
-  load-bearing choice for requirement #2: `query()` authenticates the way Claude Code does — the
+  essential choice for requirement #2: `query()` authenticates the way Claude Code does — the
   user's **Claude subscription (`~/.claude/.credentials.json`) by default**, or `ANTHROPIC_API_KEY`
   if one is present in the environment. No API key is required. (The first cut of this backend used
   `@anthropic-ai/sdk`, which only authenticates via an API key; that failed for a subscription user

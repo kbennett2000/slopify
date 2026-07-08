@@ -25,7 +25,7 @@ research probe. Keep all three in mind when changing anything here.
 Slopify is **generative and stylistic** — there's no correct answer to compute, only judgment to
 apply. "Is this post sufficiently, transparently slop?" and "does the kernel still survive?" are
 read-and-decide calls, not assertions a script can check. So the **LLM is the engine**: the whole
-tool is a prompt, pinned to `claude-opus-4-8` at effort `max` (`.claude/settings.json`) because
+tool is a prompt, pinned to `claude-opus-4-8` at effort `high` (`.claude/settings.json`) because
 coherently compounding slop across five passes while holding every invariant and guardrail wants
 the strong model. No code, no persisted state — see
 `docs/adr/ADR-0001-slopify-prompt-only-skill.md`.
@@ -45,8 +45,12 @@ There is deliberately **no `input/`/`output/` drop-off folder** — the skill is
 
 - `docs/slopify_model_v1.0.md` — the canonical, versioned methodology (what & why); the source of
   truth that refinement edits.
+- `docs/install.md` — the plain, per-OS (Windows/macOS/Linux) install & run guide for the web UI;
+  the friendly getting-started page the README links to.
 - `docs/for-developers.md` — how the skill is assembled (the reference-architecture walkthrough).
 - `docs/studying-model-collapse.md` — the recursion experiment and how to run it.
+- `docs/what-am-i-looking-at.md` — the science behind the collapse demo (what model collapse is,
+  why it matters, references).
 - `docs/adr/` — architecture decisions (prompt-only; web-UI interaction model; web-UI backend).
 - `.claude/skills/slopify/` — the `slopify` skill (`SKILL.md`) + worked `examples/`.
 - `.claude/commands/slopify.md` — the `/slopify` command (the run mechanism).

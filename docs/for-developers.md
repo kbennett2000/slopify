@@ -8,6 +8,19 @@ no dependencies. That makes it a clean worked example of how a capability is pac
 Code. If you're here to learn the pattern (rather than to laugh at breakfast posts), this is the
 map.
 
+## New here? What's a Claude Code "skill"?
+
+A **skill** is a reusable capability you hand to Claude as a plain Markdown file — a `SKILL.md` with
+a short YAML header and a body of instructions. Claude reads the header's `description` and, when a
+request matches, **loads the skill and follows it**; you can also trigger one by name with
+`/<skill-name>`. There's nothing to install and no code to run: the Markdown *is* the program, and
+the model is the engine that executes it. (Slopify is exactly this — a `description` that says "when
+the user wants to slopify something," plus a body spelling out the method.)
+
+Brand new to this? The official docs are the place to start:
+[**Claude Code skills**](https://code.claude.com/docs/en/skills), built on the cross-tool
+[Agent Skills](https://agentskills.io) open standard.
+
 ## The four moving parts
 
 A skill like this is four artifacts that reference each other:
@@ -40,6 +53,21 @@ one finished post, delivered in chat
 The important boundary: the **skill produces a post and hands it back** — it doesn't care whether
 the caller is the `/slopify` command, a plain chat request, or (later) a web UI. That
 delivery-agnostic seam is what lets the interface change without touching the method.
+
+## A peek inside `SKILL.md`
+
+Open [`.claude/skills/slopify/SKILL.md`](../.claude/skills/slopify/SKILL.md) and you'll see the whole
+"program," in two parts:
+
+- **The frontmatter** (the YAML at the top): a `name` and a `description`. The `description` is the
+  trigger — it lists the phrases that should fire the skill ("slopify," "make this AI slop") and says
+  what it's *not* for. That one field is most of what makes a skill feel reliable.
+- **The body** (plain Markdown): the actual method — write a sane **base post**, then run **N
+  amplification passes** that each escalate the *previous* pass's text (never restarting from the
+  kernel), holding a set of hard invariants and guardrails, and delivering only the final post.
+
+No parser and no state machine — Claude reads those instructions and carries them out. That's the
+whole trick.
 
 ## Running it as a web app
 
@@ -88,3 +116,7 @@ fire on the right ones. Precision in that one field is most of what makes a skil
    skill's version line with it.
 
 That's the whole recipe. Slopify just happens to use it to make a golden retriever ascend.
+
+**Next steps:** skim the real files linked above, then read the official
+[Claude Code skills docs](https://code.claude.com/docs/en/skills) and the
+[Agent Skills](https://agentskills.io) standard when you're ready to build your own.

@@ -1,4 +1,4 @@
-<!-- Marketing brochure. Pure satire. The load-bearing docs live elsewhere; this file is
+<!-- Marketing brochure. Pure satire. The real docs live elsewhere; this file is
      presentation only and is safe to enjoy. See the honest small print at the bottom. -->
 
 # ★ ★ ★ SLOPIFY™ — AS SEEN ON TV ★ ★ ★
